@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	duration "github.com/channelmeter/iso8601duration"
 	"github.com/stretchr/testify/assert"
+	duration "github.com/vargind/iso8601duration"
 )
 
 func TestFromString(t *testing.T) {
