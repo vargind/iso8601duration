@@ -20,7 +20,7 @@ var (
 
 	tmpl = template.Must(template.New("duration").Parse(`P{{if .Years}}{{.Years}}Y{{end}}{{if .Weeks}}{{.Weeks}}W{{end}}{{if .Days}}{{.Days}}D{{end}}{{if .HasTimePart}}T{{end }}{{if .Hours}}{{.Hours}}H{{end}}{{if .Minutes}}{{.Minutes}}M{{end}}{{if .Seconds}}{{.Seconds}}S{{end}}`))
 
-	full = regexp.MustCompile(`P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+)S)?)?`)
+	full = regexp.MustCompile(`P((?P<year>\d+)Y)?((?P<month>\d+)M)?((?P<day>\d+)D)?(T((?P<hour>\d+)H)?((?P<minute>\d+)M)?((?P<second>\d+\.?\d+)S)?)?`)
 	week = regexp.MustCompile(`P((?P<week>\d+)W)`)
 )
 
@@ -57,28 +57,28 @@ func FromString(dur string) (*Duration, error) {
 			continue
 		}
 
-		val, err := strconv.Atoi(part)
+		val, err := strconv.ParseFloat(part, 64)
 		if err != nil {
 			return nil, err
 		}
 		switch name {
 		case "year":
-			d.Years = val
+			d.Years = int(val)
 		case "month":
 			// allow month if it's zero
 			if val != 0 {
 				return nil, ErrNoMonth
 			}
 		case "week":
-			d.Weeks = val
+			d.Weeks = int(val)
 		case "day":
-			d.Days = val
+			d.Days = int(val)
 		case "hour":
-			d.Hours = val
+			d.Hours = int(val)
 		case "minute":
-			d.Minutes = val
+			d.Minutes = int(val)
 		case "second":
-			d.Seconds = val
+			d.Seconds = int(val)
 		default:
 			return nil, errors.New(fmt.Sprintf("unknown field %s", name))
 		}

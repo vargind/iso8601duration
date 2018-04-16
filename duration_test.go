@@ -13,11 +13,11 @@ func TestFromString(t *testing.T) {
 
 	// test with bad format
 	_, err := duration.FromString("asdf")
-	assert.Equal(t, err, duration.ErrBadFormat)
+	assert.Equal(t, duration.ErrBadFormat, err)
 
-	// test with month
+	// test with non-zero month
 	_, err = duration.FromString("P1M")
-	assert.Equal(t, err, duration.ErrNoMonth)
+	assert.Equal(t, duration.ErrNoMonth, err)
 
 	// test with good full string
 	dur, err := duration.FromString("P1Y0M2DT3H4M5S")
@@ -27,6 +27,13 @@ func TestFromString(t *testing.T) {
 	assert.Equal(t, 3, dur.Hours)
 	assert.Equal(t, 4, dur.Minutes)
 	assert.Equal(t, 5, dur.Seconds)
+
+	// test with decimal precision in seconds
+	dur, err = duration.FromString("P0Y0M0DT3H1M54.777S")
+	assert.Nil(t, err)
+	assert.Equal(t, 3, dur.Hours)
+	assert.Equal(t, 1, dur.Minutes)
+	assert.Equal(t, 54, dur.Seconds)
 
 	// test with good week string
 	dur, err = duration.FromString("P1W")
